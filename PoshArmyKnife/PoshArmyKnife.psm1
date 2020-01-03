@@ -107,3 +107,13 @@ foreach ($vmname in $vmlist){
     Get-Snapshot -VM $vm | Where-Object {($_.Created -lt (Get-Date).AddDays($grace)) -And ($_.Name -like "*$SnapSuffix*")} | Remove-Snapshot -confirm:$false
     }
 }
+
+Function Write-XmlToScreenPAK ([xml]$xml) {
+	$StringWriter = New-Object System.IO.StringWriter;
+	$XmlWriter = New-Object System.Xml.XmlTextWriter $StringWriter;
+    $XmlWriter.Formatting = "indented";
+    $Xml.WriteTo($XmlWriter);
+    $XmlWriter.Flush();
+    $StringWriter.Flush();
+    Write-Output $StringWriter.ToString();
+}
