@@ -7,8 +7,7 @@ Requires PSFramework module installed
 
 #>
 
-Function Remove-OldSnapshotsPAK
-{
+Function Remove-OldSnapshotsPAK {
 
 <#
   .SYNOPSIS
@@ -117,3 +116,46 @@ Function Write-XmlToScreenPAK ([xml]$xml) {
     $StringWriter.Flush();
     Write-Output $StringWriter.ToString();
 }
+
+<#Function Sync-FilePAK{
+
+    #add support for -WhatIf
+[cmdletbinding(SupportsShouldProcess=$True)]
+
+param
+(
+    [Parameter(Mandatory=$true)] [int32] $file1, 
+    [Parameter(Mandatory=$true)] [string] $file2
+
+)
+
+######Use the below to create cases#####
+
+IF (Test-Path $localfile){
+    IF ((Get-ChildItem $localfile).LastWriteTime -gt (Get-ChildItem $backupfile).LastWriteTime){
+        Copy-Item -Path $localfile -Destination $backupfile -Force
+        Write-Host "Local newer than backup, overwriting backup..."
+    }
+    else {
+        IF ((Get-ChildItem $localfile).LastWriteTime -ne (Get-ChildItem $backupfile).LastWriteTime){
+        Copy-Item $backupfile -Destination $localfile -Force
+        Write-Host "Backup newer than local, overwriting local..."
+        }
+        else {
+            Write-Host "Backup and local file are the same, no action taken"
+        }
+    }
+    
+} else {
+    If (Test-Path $backupfile){
+        New-Item -Path $localfile -Force
+        Copy-Item -Path $backupfile -Destination $localfile -Force
+        Write-Host "No local bookmarks exist, copying backup to local..."
+    }
+    Else {
+        Write-Host "No bookmark files exist, no action taken"
+    }
+}
+
+
+#>
